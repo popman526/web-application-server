@@ -33,4 +33,11 @@ public class User {
     public String toString() {
         return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
     }
+
+	public boolean login(String password) {
+		if (this.password.equals(password)) {
+			return true;
+		}
+		return false;
+	}
 }
