@@ -14,7 +14,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import controller.Controller;
 import db.DataBase;
+import mapping.RequestMapping;
 import model.User;
 import util.HttpRequestUtils;
 import util.IOUtils;
@@ -65,20 +67,27 @@ public class RequestHandler extends Thread {
         	HttpRequest request = new HttpRequest(in);
         	HttpResponse response = new HttpResponse(out);
         	
-        	String path = getDefaultPath(request.getPath());
+        	Controller controller = RequestMapping.getController(request.getPath());
 
-        	if ("/user/create".startsWith(path)) {
-        		create(request, response);
-        	} else if ("/user/login".equals(path)) {
-        		login(request, response);
-        	} else if ("/user/list".equals(path)) {
-        		list(request, response);
-        	} else if (path.endsWith(".css")) {
-        		cssResponse(out, path);
-        	} else {
-//        		responseResource(out, path);
+        	if (controller == null) {
+        		String path = getDefaultPath(request.getPath());
         		response.forward(path);
+        	} else {
+        		controller.service(request, response);
         	}
+//        	String path = getDefaultPath(request.getPath());
+//
+//        	if ("/user/create".startsWith(path)) {
+//        		create(request, response);
+//        	} else if ("/user/login".equals(path)) {
+//        		login(request, response);
+//        	} else if ("/user/list".equals(path)) {
+//        		list(request, response);
+//        	} else if (path.endsWith(".css")) {
+//        		cssResponse(out, path);
+//        	} else {
+//        		response.forward(path);
+//        	}
         } catch (IOException e) {
             log.error(e.getMessage());
         }
